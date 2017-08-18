@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://unpkg.com/vue/dist/vue.js"></script>
+</head>
+<body>
+
+
+<h1>介绍 </h1>
+<div id="app" >
+    <p> {{message}} </p>
+</div>
+
+<div id="app-2">
+    <span :title="message">鼠标停留将显示提示信息</span>
+</div>
+
+<div id="app-3">
+    <p v-if="seen">现在看到我了</p>
+</div>
+
+<div id="app-4">
+    <ul>
+        <li v-for="item in todos"> {{item.text}} </li>
+    </ul>
+
+</div>
+
+<div id="app-5">
+    <p> {{message}}</p>
+    <button @click="reverseMessage">逆转消息</button>
+</div>
+
+<div id="app-6">
+    <p>{{message}}</p>
+    <input v-model="message">
+</div>
+
+
+<ol id="app-7">
+    <todo-item2></todo-item2>
+    <li>这也是待办</li>
+</ol>
+
+<script>
+    Vue.component('todo-item2', {
+        template:'<li>这是一个待办项</li>'
+    })
+</script>
+
+<div id="app-7">
+    <todo-item v-for="item in items" :todo="item"></todo-item>
+</div>
+
+<script>
+    Vue.component('todo-item',{
+        props:['todo'],
+        template:'<li>{{todo.text}}</li>'
+    })
+    var app7= new Vue({
+        el:'#app-7',
+        data:{
+            items:[
+                {text:'ab'},
+                {text:'bc'},
+                {text:'cd'}
+            ]
+        }
+    })
+</script>
+
+<h1>Vue实例</h1>
+<script>
+    var vm=new Vue({
+        data:{
+            a:1
+        },
+        created:function(){
+            console.log('a is ' + this.a)
+        }
+    })
+</script>
+
+<div id="my-1">
+    <span v-once> This will never change: {{msg}}</span>
+    <br>
+    <span > This will change: {{msg}}</span>
+    <br>
+    <input v-model="msg">
+</div>
+<script>
+    var my1= new Vue({
+        el:'#my-1',
+        data:{
+            msg:"enjoy the day!"
+        }
+    })
+</script>
+
+<div v-html="rawHtml" id="my-2"></div>
+<script>
+    var my2= new Vue({
+        el:'#my-2',
+        data:{
+            rawHtml:'<p style="color:red;"> I am raw html!</p>'
+        }
+    })
+</script>
+
+<div id="my-3">
+    <span :style="style"> change my color! </span>
+    <input v-model="style">
+
+</div>
+<script>
+    var my3= new Vue({
+        el:'#my-3',
+        data:{
+            style: 'color:red'
+        }
+    };
+</script>
+
+<div id="my-4">
+    {{msg+"+1="+(msg+1)}}
+    <br>
+    <span v-if="seen">你看的见我吗？</span>
+    <span >{{seen}}</span>
+    <span >{{seen_text}}</span>
+    <input v-model="seen_text">
+</div>
+<script>
+    var my4= new Vue({
+        el:'#my-4',
+        data:{
+            msg:2,
+            seen_text:"false"
+        },
+        computed:{
+            seen:function(){
+                return this.seen_text==="true";
+            }
+        }
+    });
+    console.log("seen is "+seen);
+</script>
+
+<h3>过滤器</h3>
+<h1>计算属性</h1>
+<div id="my-5">
+    你输入的东西都会被改变<br>
+    也可以改变色彩呢<br>
+    a{{message}}
+    <br>
+    <span :style="color|change2">{{message|change}} </span>
+    <input v-model="message">
+    <input v-model="color">
+    <br>
+    更改色彩，以重新渲染，你会发现methods实时变化，而computed不变
+    <br>
+    <span > {{'methods: '+color+time()}}</span>
+    <br>
+    <span > {{'computed: '+color+time2}}</span>
+</div>
+<script>
+    var my5= new Vue({
+        el:'#my-5',
+        data:{
+            message:"请输入文字",
+            color:"red"
+        },
+        filters:{
+            change:function(value){
+                return value+'啊!'
+            },
+            change2:function(x){
+                return 'color:' + x
+            }
+        },
+        methods:{
+            time: function(){
+                return Date.now()
+            }
+        },
+        computed:{
+            time2: function(){
+                return Date.now()
+            }
+        }
+
+    })
+</script>
+
+
+<div id="my-6">
+    <br> show计算属性的setter
+    <br>
+    <input v-model="fullname">
+    <br>
+    first name: <span>{{first}}</span>
+    <br>
+    last name: {{last}}
+    <br>
+</div>
+
+<script>
+    var my6= new Vue({
+        el:'#my-6',
+        data:{
+            first:'scott',
+            last:'chen'
+        },
+        computed:{
+            fullname:{
+                get:function(){
+                  return this.first+' '+this.last
+                },
+                set:function(value){
+                    var names=value.split(' ');
+                    this.first=names[0];
+                    this.last=names[1]
+                }
+            }
+        }
+    })
+</script>
+
+
+<div id="watch-example">
+    <p>
+        ask a yes/no quesion:
+        <input v-model="question">
+    </p>
+    <p>{{answer}}</p>
+</div>
+
+<script>
+    var watchExample= new Vue({
+        el:'#watch-example',
+        data:{
+            question:'',
+            answer:'ask a question and I will answer you!'
+        },
+        watch:{
+            question:function(value){
+                this.answer='Waiting for you to stop typing...';
+                this.getAnswer()
+            }
+
+        },
+
+        methods:{
+            getAnswer:/*_.debounce(*/
+                function(){
+                    this.answer="now I will tell you "
+                }/*,
+                500
+            )*/
+        }
+
+    })
+</script>
+
+
+<h1>class与style绑定</h1>
+<div id="my-7">
+    <p id="my-7-1" :class="{active:isActive, 'text-danger':hasError}">
+     <p id="my-7-2" :class="classObject">
+     <p id="my-7-3" :class="[activeClass,errorClass]">
+</div>
+
+<script>
+    var my7= new Vue({
+        el:'#my-7',
+        data:{
+            isActive:true,
+            hasError:true,
+            classObject:{
+                active2:true,
+                'text-danger2':true
+            },
+            activeClass:'active3',
+            errorClass:'text-danger3'
+
+        }
+    });
+</script>
+<script>
+    var my7var1= document.getElementById('my-7-1').getAttribute('class');
+    document.write(my7var1+"<br>");
+    var my7var2= document.getElementById('my-7-2').getAttribute('class');
+    document.write(my7var2+"<br>");
+    var my7var3= document.getElementById('my-7-3').getAttribute('class');
+    document.write(my7var3);
+
+</script>
+
+
+<div id="my-8">
+<my-component :class="classObject" id="my-8-1"></my-component>
+</div>
+
+<script>
+    Vue.component('my-component',{
+        template:'<p class="foo bar">Hi</p>'
+    })
+    var my8= new Vue({
+        el:'#my-8',
+        data:{
+            classObject:{
+                class1:true,
+                foo:false
+            }
+        }
+    })
+    var my8var1= document.getElementById('my-8-1').getAttribute('class');
+    document.write(my8var1+'<br>');
+</script>
+
+<div id='my-9'>
+    <p :style="{color:theColor, fontSize: theSize+'px'}"> hello kitty! </p>
+    <p :style="theStyle" >hello kitty! </p>
+    <p :style="[theStyle,theStyle2]" >hello kitty! </p>
+</div>
+<script>
+    var my9= new Vue({
+        el:'#my-9',
+        data:{
+            theColor: 'red',
+            theSize:20,
+            theStyle:{
+                color:'green',
+                fontSize:20+'px'
+            },
+            theStyle2:{
+                backgroundColor:'red',
+                fontSize:30+'px'
+            }
+        }
+    })
+</script>
+
+<h1>条件渲染</h1>
+
+<div id="my-10">
+    <p v-if="ok"> 条件成立</p>
+    <p v-else> 条件不成立</p>
+    <template v-if="ok2">
+        <p>这里要做</p>
+        <p>一堆事</p>
+    </template>
+    <template v-else>
+        <p>这里不做</p>
+        <p>一堆事</p>
+    </template>
+
+</div>
+
+<script>
+   var my10= new Vue({
+       el:'#my-10',
+       data:{
+           ok:true,
+           ok2:false
+       }
+   })
+</script>
+
+<div id="my-11">
+    <template v-if="type==='username'">
+        username:
+        <input placeholder="Enter your username">
+        加上key
+        <input placeholder="Enter your username" key="input1">
+    </template>
+    <template v-else>
+        email:
+        <input placeholder="Enter your email">
+        加上key
+        <input placeholder="Enter your email" key="input2">
+    </template>
+    <input v-model="type">
+    <br>
+    <p v-show="true">should I show?</p>
+    <p v-show="false">should I show?</p>
+</div>
+<script>
+    var my11= new Vue({
+        el:'#my-11',
+        data:{
+            type:'username'
+        }
+    })
+</script>
+
+<h1>8.列表渲染</h1>
+<div id="my-12">
+    <ul>
+        <li v-for="(item,index) in items">{{index+item}}</li>
+        <li v-for="(value,key,index) in bananas">{{index+' '+key+':'+value}}</li>
+        <li v-for="i in 10">{{i}}</li>
+    </ul>
+    <template v-for="(apple,index,key) in apples">
+        <p key="abc">{{index+' '+apple+ ' '+key}}</p>
+    </template>
+    <ol>
+        <li v-for="(test,key) in tests" v-if="test.isOK">{{key+' '+test}}</li>
+    </ol>
+
+</div>
+<script>
+    var my12= new Vue({
+        el:'#my-12',
+        data:{
+           items:['苹果','香蕉','梨'],
+            apples:['黄苹果','绿苹果','红苹果'],
+            bananas:{
+               leaves:'green',
+               flowers:'red',
+                main:'yellow'
+            },
+            tests:{
+               one:{isOK:true},
+               two:{isOK:false},
+               three:{isOK:true}
+            }
+        }
+    })
+</script>
+
+<div id="my-13">
+   they are even numbers:{{evenNumbers}}
+</div>
+<script>
+    var my12= new Vue({
+        el:'#my-13',
+        data:{
+            numbers:[1,2,3,4,5,6]
+        },
+        computed:{
+            evenNumbers: function(){
+                return this.numbers.filter(
+                    function(value){return value%2 ===0}
+                )
+            }
+        }
+    })
+</script>
+
+<h1>监听事件</h1>
+
+<div id="my-14">
+    <button @click="hits++">加1</button>
+    <p>这个按钮被点击了{{hits}}次</p>
+    <button @click="true_false()">真假变换</button>
+    <p>这回是{{logic}}的</p>
+    <button @click="sent(message)">发送</button>
+    <input v-model="message"> <br>
+    <button @click.once="hits2++">加1</button>
+    <p>不管这个按钮被点击了多少次，只有1次有效： {{hits2}}次</p>
+    <br><br>
+    <input  @keyup.right="hits3++" @keyup.left="hits3--">
+    <p>请按键盘，左减右加:{{hits3}}次</p>
+    <input  @keyup.ctrl.right="hits4++" @keyup.ctrl.left="hits4--">
+    <p>请按键盘，按住ctrl键,左减右加:{{hits4}}次</p>
+    <input  @keyup.alt.67="hits5++" @click.alt="hits5--">
+    <p>请按键盘，alt+c 加, alt+点击 减:{{hits5}}次</p>
+</div>
+<script>
+    var my14= new Vue({
+        el:'#my-14',
+        data:{
+            hits:0,
+            hits2:0,
+            hits3:0,
+            hits4:0,
+            hits5:0,
+            logic:true,
+            message:'something to say'
+        },
+        methods:{
+            true_false:function(){
+                this.logic= !this.logic;
+            },
+            sent:function(value){
+                alert('I want to say: '+value)
+            }
+        }
+
+    })
+</script>
+
+<h1>表单控件绑定</h1>
+<div id="my-15">
+    <textarea >abc</textarea>
+    <textarea placeholder="abc"></textarea>
+    <textarea v-model="message" placeholder="hi"></textarea>
+    {{message}}
+    <br>
+    <input type="checkbox" v-model="checked" id="checkbox1">
+    <label for="checkbox1">{{checked}}</label>
+    <br>
+    <input type="checkbox" v-model="checks" id="checkbox2" value="box1">
+    <label for="checkbox2">box1</label>
+    <input type="checkbox" v-model="checks" id="checkbox3" value="box2">
+    <label for="checkbox3">box2</label>
+    <br>
+    <span>checked names: {{checks}}</span>
+    <br>
+    <input type="radio" v-model="picked" id="pick1" value="pick1">
+    <label for="pick1">他</label>
+    <input type="radio" v-model="picked" id="pick2" value="pick2">
+    <label for="pick2">她</label>
+    <br>
+    <span>picked: {{picked}}</span>
+    <br>
+    <select v-model="selected">
+        <option> A</option>
+        <option> B</option>
+        <option> C</option>
+    </select>
+    <span>selected:{{selected}}</span>
+    <select multiple v-model="selected_s">
+        <option> A</option>
+        <option> B</option>
+        <option> C</option>
+    </select>
+    <span>selected:{{selected_s}}</span>
+    <br>
+    <input v-model.number='age' type="number">
+    {{age}}
+    <br>
+    <input v-model.trim="name">
+    会把开头结尾空格去掉：{{name}}
+</div>
+<script>
+    var my15= new Vue({
+        el:'#my-15',
+        data:{
+            message:'',
+            checked:true,
+            checks:[],
+            selected:'',
+            selected_s:[],
+            name:"",
+            age:0,
+            picked:''
+        }
+    })
+</script>
+
+
+<h1>组件</h1>
+
+<div id="example">
+    <my-component11></my-component11>
+</div>
+
+<script>
+    Vue.component("my-component11",{
+        template:'<div>A custom component!</div>'
+    })
+    new Vue({
+        el:'#example'
+    })
+</script>
+
+<div id="example-2">
+    <my-component11-2></my-component11-2>
+</div>
+
+<script>
+    var Child={
+        template:'<div> A child!</div>'
+    };
+    new Vue({
+        el:'#example-2',
+        components:{
+            'my-component11-2':Child
+        }
+    })
+</script>
+
+
+<table id="a-row">
+    <tr is="my-row"></tr>
+    <tr is="my-row2"></tr>
+    <my-row2></my-row2>
+</table>
+<script>
+    new Vue({
+        el:'#a-row',
+        components:{
+            'my-row':{template:'<tr>苹果</tr>'},
+            'my-row2':{template:'<tr>苹果2</tr>'}
+        }
+    })
+</script>
+
+<div id="example-3">
+    <simple-counter></simple-counter>
+    <simple-counter></simple-counter>
+    <simple-counter></simple-counter>
+</div>
+
+<script>
+    var data2={counter:0}
+    Vue.component('simple-counter',{
+        template:'<button v-on:click="counter+=1">{{counter}}</button>',
+        data:function(){
+            return data2
+        }
+    })
+    new Vue({
+        el:'#example-3'
+    })
+</script>
+
+<div id="example-4">
+    <simple-counter2></simple-counter2>
+    <simple-counter2></simple-counter2>
+    <simple-counter2></simple-counter2>
+</div>
+
+<script>
+    Vue.component('simple-counter2',{
+        template:'<button v-on:click="counter+=1">{{counter}}</button>',
+        data:function(){
+            return {
+                counter:0
+            }
+        }
+    })
+    new Vue({
+        el:'#example-4'
+    })
+</script>
+
+<div id="child2">
+    <child my-message="hello child!"></child>
+    <child my-message="hello child!"></child>
+    <br>
+    <span>{{parentMsg}}</span>
+    <br>
+    <child :my-message=parentMsg></child>
+    <input v-model=parentMsg>
+    <br> 按数字传递
+    <child :my-message='1'></child>
+    <br> 按字符传递
+    <child my-message='1'></child>
+    <br>
+    <child :initial-number='100' my-message='here'></child>
+</div>
+
+<script>
+    Vue.component('child',{
+        props:['myMessage','initialNumber'],
+
+        computed:{
+            added:function(){return this.initialNumber+1}
+        },
+        data:
+            function(){
+                return {minus: this.initialNumber - 1,
+                    minus2: this.initialNumber-2
+                }
+            }
+        ,
+        template:'<span>{{myMessage+1}}:{{added}}:{{minus}} minus2:{{minus2}}</span>'
+    })
+    new Vue({
+        el:'#child2',
+        data:{
+            parentMsg:'test'
+        }
+    })
+</script>
+
+<div id="exam20">
+    hello<br>
+    {{testObject.message}}
+    <br>
+    <example20 :aobject="testObject" strornum="hi" :reqnum="11" :reqnum2="12" :test-result="11"></example20>
+</div>
+
+<script>
+    Vue.component('example20',{
+        props:{
+            number:Number,
+            strornum:[String, Number],
+            reqnum:{
+                type:Number,
+                required:true
+            },
+            defnum:{
+                type:Number,
+                default:100
+            },
+            aobject:{
+                type:Object,
+                default:function(){
+                    return {message:'hello'}
+                }
+            },
+            reqnum2:{
+                type:Number,
+                required:true
+            },
+            testResult:{
+                validator:function(value){
+                    return value>10
+                }
+            }
+
+        },
+        template:'<span>hello 1:{{number}} 2:{{strornum}} 3:{{reqnum}} 4:{{defnum}} 5:{{aobject.message}} 6.{{testResult}} 7.{{reqnum2}}end</span>'
+    })
+    new Vue({
+        el:'#exam20',
+        data:{
+            testObject:{message:'hi'}
+        }
+    })
+</script>
+
+
+
+
+
+<script src="base.js"></script>
+
+</body>
+</html>
