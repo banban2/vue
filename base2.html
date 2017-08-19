@@ -54,9 +54,6 @@
     <custom-input v-model="something"></custom-input><br>
     iside custum-input:<br>
     <custom-input :value="something" @input="something=arguments[0]"></custom-input><br>
-    it's zero, another component active:<br>
-    <custom-zero></custom-zero>
-
 
 </div>
 <script>
@@ -74,6 +71,40 @@
         data:{
             something:1
         }
+    })
+</script>
+
+内容分发slot
+<div id="slot">
+    <span>hi</span>
+    <child-2></child-2>
+</div>
+<script>
+    Vue.component('child-2',{
+        template:"\
+        <div>\
+            <h4>这是一个子组件</h4>\
+            <slot><p>如果没有分发内容则显示此段</p></slot>\
+            <div>\
+                <slot name='slot1'>如果没制定slot1则显示此段</slot>\
+            </div>\
+        </div>"
+    })
+    /*
+    Vue.component('app',{
+        template:"\
+        <div>\
+            <h3>这是一个父组件</h3>\
+            <child>\
+                <p>此段将slot进子组件</p>\
+                <p slot='head'>此段将分发进head</p>\
+            </child>\
+        </div>\
+        "
+    })
+    */
+    new Vue({
+        el:'#slot'
     })
 </script>
 
