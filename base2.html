@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="http://unpkg.com/vue/dist/vue.js"></script>
+    <script src="../vue/vue.js"></script>
+    <!--<script src="http://unpkg.com/vue/dist/vue.js"></script> -->
 </head>
 <body>
 <h1>组件</h1>
@@ -41,7 +42,7 @@
     })
 </script>
 
-使用自定义事件的表单输入组件，非父子通信
+使用自定义事件的表单输入组件
 <div id="vmodel">
     v-model:<br>
     <input v-model="something">
@@ -59,21 +60,14 @@
 
 </div>
 <script>
-    var bus= new Vue()
     Vue.component('custom-input',{
         template:"<input :value='value' @input='emit($event.target.value)'>",
         props:['value'],
         methods:{
             emit:function(value){
                 this.$emit('input',value)
-                if(value==0){
-                    bus.$emit("itszero")
-                }
             }
         }
-    })
-    Vue.component("custom-zero",{
-        template:"<span > </span>"
     })
     new Vue({
         el:'#vmodel',
