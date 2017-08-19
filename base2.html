@@ -77,32 +77,32 @@
 内容分发slot
 <div id="slot">
     <span>hi</span>
-    <child-2></child-2>
+    <child></child>
+    <app></app>
 </div>
 <script>
-    Vue.component('child-2',{
+    Vue.component('child',{
         template:"\
         <div>\
             <h4>这是一个子组件</h4>\
-            <slot><p>如果没有分发内容则显示此段</p></slot>\
             <div>\
+                <slot><p>如果没有分发内容则显示此段</p></slot>\
                 <slot name='slot1'>如果没制定slot1则显示此段</slot>\
+                <slot name='slot2'>如果没制定slot2则显示此段</slot>\
             </div>\
         </div>"
     })
-    /*
     Vue.component('app',{
         template:"\
         <div>\
             <h3>这是一个父组件</h3>\
             <child>\
                 <p>此段将slot进子组件</p>\
-                <p slot='head'>此段将分发进head</p>\
+                <p slot='slot1'>此段将分发进slot1</p>\
             </child>\
         </div>\
         "
     })
-    */
     new Vue({
         el:'#slot'
     })
