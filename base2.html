@@ -41,6 +41,47 @@
     })
 </script>
 
+使用自定义事件的表单输入组件，非父子通信
+<div id="vmodel">
+    v-model:<br>
+    <input v-model="something">
+    {{something}} <br>
+    inside v-model:<br>
+    <input :value="something" @input="something=$event.target.value">
+    {{something}} <br>
+    custum-input:<br>
+    <custom-input v-model="something"></custom-input><br>
+    iside custum-input:<br>
+    <custom-input :value="something" @input="something=arguments[0]"></custom-input><br>
+    it's zero, another component active:<br>
+    <custom-zero></custom-zero>
+
+
+</div>
+<script>
+    var bus= new Vue()
+    Vue.component('custom-input',{
+        template:"<input :value='value' @input='emit($event.target.value)'>",
+        props:['value'],
+        methods:{
+            emit:function(value){
+                this.$emit('input',value)
+                if(value==0){
+                    bus.$emit("itszero")
+                }
+            }
+        }
+    })
+    Vue.component("custom-zero",{
+        template:"<span > </span>"
+    })
+    new Vue({
+        el:'#vmodel',
+        data:{
+            something:1
+        }
+    })
+</script>
 
 
 </body>
