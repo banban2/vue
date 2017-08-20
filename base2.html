@@ -182,6 +182,29 @@
     })
 </script>
 
+动态组件
+<div id="component">
+    <component :is="which"></component>
+    <component is="a_ol"></component>
+
+</div>
+<script>
+    new Vue({
+        el:'#component',
+        data:{
+            which:'a_ul'
+        },
+        components:{
+            a_ul:{
+                template:'<ul>it is ul!<li>item</li></ul>'
+            },
+            a_ol:{
+                template:'<ol>it is ol!<li>item</li></ol>'
+            }
+        }
+    })
+</script>
+
 
 
 
