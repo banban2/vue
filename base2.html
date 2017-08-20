@@ -108,6 +108,47 @@
     })
 </script>
 
+作用域插槽：使用一个可重用的模版替换已渲染的元素
+子组件中插槽附带prop对象，父组件不但将内容分发进子组件，还调用此prop
+也就是说子组件不但留了插槽，还留了些信息给父组件
+<div id='slot1'>
+    <child1></child1>
+    <br>
+    <app1></app1>
+</div>
+<script>
+    Vue.component('child1',{
+        template:'\
+            <div>\
+                这是子组件<br>\
+                <slot text="hello from child" color="red">没指明slot则显示此段</slot>\
+            </div>\
+        '
+    })
+    Vue.component('app1',{
+        template:'\
+        <div>\
+            这是父组件<br>\
+            <child1>\
+                <template scope="props">\
+                    <span>hello from parent</span>\
+                    <span style="color:props.color">{{props.text}} {{props.color}}</span>\
+                </template>\
+            </child1>\
+        </div>\
+        '
+    })
+    new Vue({
+        el:'#slot1'
+    })
+        
+</script>
+
+
+
+
+
+
 
 </body>
 </html>
