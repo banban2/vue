@@ -153,7 +153,7 @@
         template:'\
         <ul>\
             <slot name="list" v-for="item in items" :item="item">\
-                <li>{{item.text}} no slot</li>\
+                <li>{{item.text}} (no slot)</li>\
             </slot>\
         </ul>\
         '
@@ -165,7 +165,7 @@
                 这是列表组件的父组件\
                 <my-list :items="items">\
                     <template slot="list" scope="props">\
-                        <li>{{props.item.text}} slot</li>\
+                        <li>{{props.item.text}} (slot)</li>\
                     </template>\
                 </my-list>\
             </div>\
