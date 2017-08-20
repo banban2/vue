@@ -145,16 +145,30 @@
 列表组件
 <div id='list'>
     <my-list :items="items"></my-list>
+    <app2 :items="items"></app2>
 </div>
 <script>
     Vue.component('my-list',{
         props:["items"],
         template:'\
         <ul>\
-            <slot name="list" v-for="item in items">\
-                <li>{{item.text}}</li>\
+            <slot name="list" v-for="item in items" :item="item">\
+                <li>{{item.text}} no slot</li>\
             </slot>\
         </ul>\
+        '
+    })
+    Vue.component('app2',{
+        props:["items"],
+        template:'\
+            <div>\
+                这是列表组件的父组件\
+                <my-list :items="items">\
+                    <template slot="list" scope="props">\
+                        <li>{{props.item.text}} slot</li>\
+                    </template>\
+                </my-list>\
+            </div>\
         '
     })
     new Vue({
